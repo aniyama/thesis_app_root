@@ -1,0 +1,63 @@
+version: "3"
+
+volumes:
+  mysql_data:
+
+services:
+  next:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: next_container
+    volumes:
+      - "./frontend/thesis-next:/app"
+    command: "yarn dev"
+    ports:
+      - "3000:3000"
+    environment:
+      - WATCHPACK_POLLING=true
+    tty: true
+    stdin_open: true
+  go:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: go_container
+    # environment:
+    #   MYSQL_USER: admin
+    #   MYSQL_PASSWORD: admin
+    #   MYSQL_DATABASE: react_go_database
+    volumes:
+      - ./backend:/go/src/app
+    ports:
+      - "8080:8080"
+    tty: true
+    stdin_open: true
+    depends_on:
+      - db
+    links:
+      - db
+
+  db:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    container_name: db_container
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: admin
+    #   MYSQL_DATABASE: react_go_database
+    #   MYSQL_USER: admin
+    #   MYSQL_PASSWORD: admin
+    #   TZ: "Asia/Tokyo"
+    tty: true
+    stdin_open: true
+    env_file:
+      - ./mysql/.env
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --skip-character-set-client-handshake
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+      # - ./mysql/my.cnf:/etc/mysql/conf.d/my.conf
+    ports:
+      - 3306:3306
+
