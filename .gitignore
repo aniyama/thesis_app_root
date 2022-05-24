@@ -1,5 +1,7 @@
 .DS_Store
 
-.devcontainer/devcontainer.json
+/.devcontainer/devcontainer.json
 
-mysql/.env
+/mysql/.env
+
+/thesis_frontend/.DS_Store
