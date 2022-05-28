@@ -21,7 +21,9 @@ CREATE TABLE category (
 CREATE TABLE tags (
     id int not null auto_increment primary key,
     tag_title varchar(32) not null,
+    user_id int not null,
     category_id int not null,
+    constraint fk_user_id foreign key (user_id) references users (id) on delete cascade,
     constraint fk_category_id foreign key (category_id) references category (id) on delete cascade
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -33,11 +35,11 @@ CREATE TABLE modules (
     tag_id int ,
     created_at datetime,
     updated_at datetime,
-    constraint fk_user_id foreign key (user_id) references users (id) on delete cascade,
+    constraint fk_modules_user_id foreign key (user_id) references users (id) on delete cascade,
     constraint fk_tag_id foreign key (tag_id) references tags (id) on delete cascade
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE thesis (
+CREATE TABLE theses (
     id int not null auto_increment primary key,
     thesis_title varchar(64) not null,
     thesis_content varchar(255) not null,
