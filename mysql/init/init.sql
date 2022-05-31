@@ -13,18 +13,18 @@ CREATE TABLE users (
     password varchar(255) not null
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE category (
+CREATE TABLE categories (
     id int not null auto_increment primary key,
-    category_title varchar(32) not null
+    title varchar(32) not null
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE tags (
     id int not null auto_increment primary key,
-    tag_title varchar(32) not null,
+    title varchar(32) not null,
     user_id int not null,
     category_id int not null,
     constraint fk_user_id foreign key (user_id) references users (id) on delete cascade,
-    constraint fk_category_id foreign key (category_id) references category (id) on delete cascade
+    constraint fk_category_id foreign key (category_id) references categories (id) on delete cascade
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE modules (
@@ -51,5 +51,5 @@ CREATE TABLE theses (
     constraint fk_thesis_tag_id foreign key (tag_id) references tags (id) on delete cascade
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO category (id, category_title) VALUES (1, 'THESIS');
-INSERT INTO category (id, category_title) VALUES (2, 'MODULE');
+INSERT INTO categories (id, title) VALUES (1, 'THESIS');
+INSERT INTO categories (id, title) VALUES (2, 'MODULE');
