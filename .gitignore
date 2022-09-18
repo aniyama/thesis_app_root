@@ -5,3 +5,5 @@
 /mysql/.env
 
 /thesis_frontend/.DS_Store
+
+/.env

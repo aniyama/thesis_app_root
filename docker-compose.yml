@@ -8,47 +8,50 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: next_container
+    container_name: ${NEXT_CONTAINER_NAME_DEV}
     volumes:
       - "./frontend/thesis-next:/app"
-    command: "yarn dev"
+    command: sh -c "yarn install && yarn dev"
     ports:
-      - "3000:3000"
+      - ${NEXT_PORT_DEV}:3000
     environment:
       - WATCHPACK_POLLING=true
+      - NEXT_ENV=${NEXT_ENV_DEV}
     tty: true
     stdin_open: true
+    networks:
+      - front-tier
+
   go:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: go_container
-    # environment:
-    #   MYSQL_USER: admin
-    #   MYSQL_PASSWORD: admin
-    #   MYSQL_DATABASE: react_go_database
+      target: dev
+    container_name: ${GO_CONTAINER_NAME_DEV}
     volumes:
       - ./backend:/go/src/app
+    environment:
+      - "TZ=Asia/Tokyo"
+      - GOLANG_ENV=${GO_ENV_DEV}
+    env_file:
+      - ./mysql/.env
     ports:
-      - "8080:8080"
+      - ${GO_PORT_DEV}:8080
     tty: true
     stdin_open: true
     depends_on:
       - db
     links:
       - db
+    networks:
+      - front-tier
+      - back-tier
 
   db:
     build:
       context: ./mysql
       dockerfile: Dockerfile
-    container_name: db_container
-    # environment:
-    #   MYSQL_ROOT_PASSWORD: admin
-    #   MYSQL_DATABASE: react_go_database
-    #   MYSQL_USER: admin
-    #   MYSQL_PASSWORD: admin
-    #   TZ: "Asia/Tokyo"
+    container_name: ${DB_CONTAINER_NAME_DEV}
     tty: true
     stdin_open: true
     env_file:
@@ -57,7 +60,15 @@ services:
     volumes:
       - ./mysql/init:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
-      # - ./mysql/my.cnf:/etc/mysql/conf.d/my.conf
     ports:
-      - 3306:3306
+      - ${DB_PORT_DEV}:3306
+    networks:
+      - back-tier
 
+networks:
+  front-tier:
+    driver: bridge
+    name: front-tier
+  back-tier:
+    driver: bridge
+    name: back-tier
