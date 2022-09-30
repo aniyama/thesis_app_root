@@ -13,7 +13,7 @@ dd:
 dv:
 	docker-compose down --volumes
 
-up:
+ps:
 	docker-compose ps -a
 
 db:
