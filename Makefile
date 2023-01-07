@@ -21,3 +21,6 @@ db:
 
 dev:
 	cd ${name} && devcontainer open .
+
+plan:
+	terraform plan
